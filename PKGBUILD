@@ -1,7 +1,7 @@
 # Repackages the upstream .deb (Electron 35 app, bundled runtime) for Arch.
 pkgname=jlcone-bin
 pkgver=1.0.72
-pkgrel=4
+pkgrel=5
 pkgdesc="JLCONE - JLCPCB Desktop Client"
 arch=('x86_64')
 url="https://www.jlcpcb.com"
