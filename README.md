@@ -1,4 +1,4 @@
-# jlcone-arch
+# jlcone-linux
 
 Arch Linux and RHEL/Fedora packages for [JLCONE](https://www.jlcpcb.com), the JLCPCB desktop client.
 
@@ -6,11 +6,13 @@ JLCPCB only publishes a Debian `.deb`. The `PKGBUILD` (Arch) and `jlcone.spec` (
 
 ## Install
 
-Download the latest [release](https://github.com/benjaminfenech/jlcone-arch/releases) and extract it, or clone the repo:
+This packages the Linux `.deb` that JLCPCB offers on [their official JLCONE download page](https://jlcone.com/download). If you're on Debian or Ubuntu, install that directly instead.
+
+Download the latest [release](https://github.com/benjaminfenech/jlcone-linux/releases) and extract it, or clone the repo:
 
 ```sh
-git clone https://github.com/benjaminfenech/jlcone-arch.git
-cd jlcone-arch
+git clone https://github.com/benjaminfenech/jlcone-linux.git
+cd jlcone-linux
 ```
 
 ### Arch
