@@ -1,4 +1,4 @@
-# jlcone-linux
+# jlcone-arch
 
 Arch Linux package for [JLCONE](https://www.jlcpcb.com), the JLCPCB desktop client.
 
@@ -10,7 +10,7 @@ You need `base-devel` (for `makepkg`).
 
 ```sh
 git clone <this repo>
-cd jlcone-linux
+cd jlcone-arch
 makepkg -si
 ```
 
