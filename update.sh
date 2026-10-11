@@ -4,6 +4,7 @@
 # or installed as jlcone-update (builds in a cache dir).
 # --check: only print the newer version (exit 0), or exit 1 if up to date.
 # --install: build and install even if the feed has nothing newer.
+# --bump: only rewrite the version and hash in the build files (used by CI).
 set -eu
 src=$(dirname "$(readlink -f "$0")")
 mode=${1:-}
@@ -49,10 +50,12 @@ if $newer; then
            -e "s/^%global deb_sha512 .*/%global deb_sha512 $sha/" "$f"
   done
 fi
+[ "$mode" = --bump ] && exit 0
 
 # pkexec rather than sudo so this also works from the launcher, with no terminal
 if [ "$pkgfile" = PKGBUILD ]; then
-  makepkg -f --noconfirm
+  # --nodeps: nothing is compiled; pacman -U installs the runtime deps
+  makepkg -f --nodeps --noconfirm
   pkexec pacman -U --noconfirm "$(makepkg --packagelist)"
 else
   v=$(file_ver jlcone.spec)

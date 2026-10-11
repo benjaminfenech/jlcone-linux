@@ -32,7 +32,7 @@ sudo dnf install rpm-build
 ./update.sh --install
 ```
 
-This downloads the `.deb`, builds the RPM and installs it with `dnf`, asking for your password. Tested on Rocky Linux 9.
+This downloads the `.deb`, builds the RPM and installs it with `dnf`, asking for your password.
 
 Start JLCONE from your app menu (listed under Development) or by running `jlcone`.
 
@@ -55,6 +55,14 @@ Run it as your normal user, not with `sudo`. It does the same update from a term
 
 From a clone of this repo you can run `./update.sh` instead. It does the same thing, and also updates the version and hash in the `PKGBUILD` and `jlcone.spec` here.
 
+## Automatic releases
+
+A GitHub Actions workflow checks JLCPCB's update feed every day. When there's a new JLCONE version, it updates the version and hash in the `PKGBUILD` and `jlcone.spec`, then builds, installs and tests both packages on Arch, Rocky Linux 9 and 10, and Fedora. If every test passes, it commits the change and publishes a release tagged `v<JLCONE version>-1`. If any test fails, nothing is released.
+
+The tests check that the `.deb` matches JLCPCB's hash, the package builds and installs, none of the app's libraries are missing, `jlcone-update` works, and the app starts with its built-in updater turned off. The same tests run on every push and pull request that changes the packaging.
+
+Release tags are `v<JLCONE version>-<packaging revision>`. The revision goes up when the packaging changes but JLCONE doesn't, and resets to 1 for each new JLCONE version.
+
 ## How it differs from the `.deb`
 
 - **The in-app updater is off.** It installs updates with `pkexec dpkg -i`, which doesn't work on Arch or RHEL. The `jlcone` launcher sets `MAS_BUILD=true`, which makes the app skip its update code as if it were an App Store build. Nothing else in the app reads this variable. This also skips the app's call to JLCPCB's update server, which would otherwise say whether an update is mandatory.
@@ -70,6 +78,8 @@ From a clone of this repo you can run `./update.sh` instead. It does the same th
 | `jlcone.spec` | The same for RHEL/Fedora (RPM) |
 | `jlcone.sh` | Launcher, installed as `/usr/bin/jlcone`. Offers updates on startup |
 | `update.sh` | Updater, installed as `/usr/bin/jlcone-update`. Uses pacman on Arch and dnf elsewhere. `--install` builds and installs even when there's no update |
+| `tests/container-test.sh` | Builds, installs and tests the package inside a fresh container. Used by CI |
+| `.github/workflows/release.yml` | Daily check for new JLCONE versions, tests and releases |
 
 ## Known issues
 

@@ -1,0 +1,120 @@
+# Daily: if JLCPCB has published a new JLCONE version, bump the build files, build and
+# smoke-test the package on each distro, then commit, tag and release. Pushes and pull
+# requests run the same build and tests on the current files, without releasing.
+name: Build, test and release
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [PKGBUILD, jlcone.spec, jlcone.sh, update.sh, 'tests/**', '.github/workflows/**']
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.feed.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: feed
+        # Only scheduled and manual runs pick up new JLCONE versions
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          rc=0; ver=$(./update.sh --check) || rc=$?
+          case $rc in
+            0) ./update.sh --bump; echo "version=$ver" >> "$GITHUB_OUTPUT" ;;
+            1) echo "No new JLCONE version" ;;
+            *) exit "$rc" ;;
+          esac
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packaging
+          path: |
+            PKGBUILD
+            jlcone.spec
+            jlcone.sh
+            update.sh
+            tests/
+
+  test:
+    needs: check
+    if: github.event_name != 'schedule' || needs.check.outputs.version != ''
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - archlinux:base-devel
+          - rockylinux/rockylinux:9
+          - rockylinux/rockylinux:10
+          - fedora:latest
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: packaging
+      # Artifacts don't keep the executable bit
+      - run: chmod +x update.sh jlcone.sh tests/container-test.sh
+      - run: tests/container-test.sh
+
+  release:
+    needs: [check, test]
+    if: needs.check.outputs.version != '' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: packaging
+          path: bumped
+      - env:
+          VERSION: ${{ needs.check.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Only these two change in a bump; copying the rest would drop executable bits
+          cp bumped/PKGBUILD bumped/jlcone.spec .
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -am "Update to JLCONE $VERSION"
+          git push
+          tag="v$VERSION-1"
+          git tag -a "$tag" -m "jlcone-bin $VERSION-1"
+          git push origin "$tag"
+
+          dir="${GITHUB_REPOSITORY#*/}-$VERSION-1"
+          cat > notes.md <<EOF
+          JLCONE $VERSION (JLCPCB desktop client), packaged for Arch Linux and RHEL/Fedora. Built from the Linux \`.deb\` on [JLCPCB's download page](https://jlcone.com/download).
+
+          This release was made automatically after JLCPCB published $VERSION. Both packages were built and tested on Arch, Rocky Linux 9 and 10, and Fedora.
+
+          ## Already installed?
+
+          Start JLCONE and choose **Update**, or run \`jlcone-update\`.
+
+          ## New install
+
+          Download **Source code (tar.gz)** below and extract it:
+
+          \`\`\`sh
+          tar xf $dir.tar.gz
+          cd $dir
+          \`\`\`
+
+          **Arch** (needs \`base-devel\`): \`makepkg -si\`
+
+          **RHEL / Rocky / Alma 9+ / Fedora:** \`sudo dnf install rpm-build\`, then \`./update.sh --install\`
+
+          The \`.deb\` is downloaded from JLCPCB during the build and checked against the SHA-512 hash from their update feed. See the README for details.
+          EOF
+          gh release create "$tag" --title "jlcone-bin $VERSION-1" --notes-file notes.md --latest
