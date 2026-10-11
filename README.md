@@ -18,13 +18,18 @@ Start JLCONE from your app menu (listed under Development) or by running `jlcone
 
 ## Updating
 
+When you start JLCONE, the launcher checks JLCPCB's update feed. This adds about a second to startup, and is skipped if you're offline or JLCONE is already running. If a newer version is out, it asks whether to update now:
+
+- **Update** downloads the new `.deb`, builds the package in `~/.cache` (about 15 seconds on a fast connection), asks for your password to install it, then starts the new version. If anything fails, it says so and starts the version you have. The log is in `~/.cache/jlcone-update.log`.
+- **Later** starts the version you have. You'll be asked again next time.
+
+The prompt needs `zenity`. Without it you get a desktop notification instead, and can update by running:
+
 ```sh
 jlcone-update
 ```
 
-Run it as your normal user, not with `sudo`. It reads JLCPCB's update feed, and if there's a newer version it builds the new package in `~/.cache` and installs it, asking for your sudo password at that point. If you're already on the latest version it does nothing.
-
-The app won't tell you when a new version is out, so run `jlcone-update` now and then.
+Run it as your normal user, not with `sudo`. It does the same update from a terminal. If you're already on the latest version it does nothing.
 
 From a clone of this repo you can run `./update.sh` instead. It does the same thing, and also updates the version and hash in the `PKGBUILD` here.
 
@@ -40,7 +45,7 @@ From a clone of this repo you can run `./update.sh` instead. It does the same th
 | File | Purpose |
 |------|---------|
 | `PKGBUILD` | Downloads the `.deb` and turns it into an Arch package |
-| `jlcone.sh` | Launcher, installed as `/usr/bin/jlcone` |
+| `jlcone.sh` | Launcher, installed as `/usr/bin/jlcone`. Offers updates on startup |
 | `update.sh` | Updater, installed as `/usr/bin/jlcone-update` |
 
 ## Known issues

@@ -1,7 +1,7 @@
 # Repackages the upstream .deb (Electron 35 app, bundled runtime) for Arch.
 pkgname=jlcone-bin
 pkgver=1.0.72
-pkgrel=3
+pkgrel=4
 pkgdesc="JLCONE - JLCPCB Desktop Client"
 arch=('x86_64')
 url="https://www.jlcpcb.com"
@@ -9,6 +9,7 @@ license=('LicenseRef-proprietary')
 depends=('gtk3' 'libnotify' 'nss' 'libxss' 'libxtst' 'xdg-utils' 'at-spi2-core'
          'util-linux-libs' 'libsecret' 'libdrm' 'mesa' 'alsa-lib')
 optdepends=('libappindicator-gtk3: tray icon support'
+            'zenity: update prompt when starting JLCONE'
             'base-devel: jlcone-update')
 provides=('jlcone')
 options=('!strip' '!debug')
