@@ -2,7 +2,7 @@
 
 Arch Linux package for [JLCONE](https://www.jlcpcb.com), the JLCPCB desktop client.
 
-JLCPCB only publishes a Debian `.deb`. This PKGBUILD downloads that official `.deb`, checks it against the SHA-512 hash from JLCPCB's update feed, and repackages it for Arch. The app itself is unchanged. It's an Electron app that ships its own Electron runtime.
+JLCPCB only publishes a Debian `.deb`. This PKGBUILD downloads that official `.deb`, checks it against the SHA-512 hash from JLCPCB's update feed, and repackages it for Arch. The app's own files aren't edited, but the package turns off the app's built-in updater and replaces it with `jlcone-update` (see [How it differs from the `.deb`](#how-it-differs-from-the-deb)). JLCONE is an Electron app that ships its own Electron runtime.
 
 ## Install
 
