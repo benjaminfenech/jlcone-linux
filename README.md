@@ -9,7 +9,7 @@ JLCPCB only publishes a Debian `.deb`. This PKGBUILD downloads that official `.d
 You need `base-devel` (for `makepkg`).
 
 ```sh
-git clone <this repo>
+git clone https://github.com/benjaminfenech/jlcone-arch.git
 cd jlcone-arch
 makepkg -si
 ```
@@ -22,6 +22,8 @@ When you start JLCONE, the launcher checks JLCPCB's update feed. This adds about
 
 - **Update** downloads the new `.deb`, builds the package in `~/.cache` (about 15 seconds on a fast connection), asks for your password to install it, then starts the new version. If anything fails, it says so and starts the version you have. The log is in `~/.cache/jlcone-update.log`.
 - **Later** starts the version you have. You'll be asked again next time.
+
+Installing from the launcher needs a polkit agent to show the password prompt. Desktop environments (GNOME, KDE Plasma, etc.) and many Hyprland/Sway shells include one. On a bare window manager, install one (e.g. `hyprpolkitagent` or `polkit-gnome`), or update with `jlcone-update` in a terminal instead.
 
 The prompt needs `zenity`. Without it you get a desktop notification instead, and can update by running:
 
