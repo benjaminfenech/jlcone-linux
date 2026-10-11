@@ -12,7 +12,7 @@
 
 Name:           jlcone-bin
 Version:        1.0.72
-Release:        1%{?dist}
+Release:        5%{?dist}
 Summary:        JLCONE - JLCPCB Desktop Client
 License:        Proprietary
 URL:            https://www.jlcpcb.com
