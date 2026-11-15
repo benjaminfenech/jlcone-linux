@@ -14,12 +14,15 @@ file_ver() { sed -n -e 's/^pkgver=//p' -e 's/^Version: *//p' "$1"; }
 
 feed=$(curl -fsSL -m 5 "$feed_url/latest-linux.yml")
 ver=$(printf '%s\n' "$feed" | sed -n 's/^version: *//p')
-sha=$(printf '%s\n' "$feed" | sed -n 's/^sha512: *//p' | base64 -d | od -An -tx1 -v | tr -d ' \n')
+# The feed lists several files (AppImage, .deb, .rpm): take the .deb entry's hash
+sha=$(printf '%s\n' "$feed" | awk -v f="jlcone-$ver.deb" '$NF == f { hit = 1; next } hit && $1 == "sha512:" { print $2; exit }' |
+      base64 -d | od -An -tx1 -v | tr -d ' \n')
 cur=$(file_ver "$src/$pkgfile")
 
-# Guard against a malformed feed before it gets written into the build files
-printf '%s' "$ver" | grep -Eqx '[0-9]+(\.[0-9]+)*' || { echo "bad version in feed: $ver" >&2; exit 1; }
-[ ${#sha} -eq 128 ] || { echo "bad sha512 in feed" >&2; exit 1; }
+# Guard against a malformed feed before it gets written into the build files.
+# Exit 2, not 1, so --check callers can tell this apart from "up to date".
+printf '%s' "$ver" | grep -Eqx '[0-9]+(\.[0-9]+)*' || { echo "bad version in feed: $ver" >&2; exit 2; }
+[ ${#sha} -eq 128 ] || { echo "no sha512 for jlcone-$ver.deb in feed" >&2; exit 2; }
 
 newer=false
 [ "$(printf '%s\n' "$ver" "$cur" | sort -V | tail -n1)" != "$cur" ] && newer=true
