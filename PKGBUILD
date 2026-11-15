@@ -1,7 +1,7 @@
 # Repackages the upstream .deb (Electron 35 app, bundled runtime) for Arch.
 pkgname=jlcone-bin
-pkgver=1.0.72
-pkgrel=6
+pkgver=1.0.73
+pkgrel=1
 pkgdesc="JLCONE - JLCPCB Desktop Client"
 arch=('x86_64')
 url="https://www.jlcpcb.com"
@@ -17,7 +17,7 @@ source=("https://rs.jlcpcb.com/static/APP/app_version/jlcone-${pkgver}.deb"
         "jlcone.sh")
 noextract=("jlcone-${pkgver}.deb")
 # sha512 from the publisher's update feed (latest-linux.yml); update.sh rewrites it
-sha512sums=('3b7b8ce774b8ea0b0bba6705d802171cf297a24adfa0ad6679baaa8d69e06382aea25626845e784581f7b68bac24ea3801d79a283127a064eae55bad7c31a3de'
+sha512sums=('2e0d09899970f2f580f39bf28fc23217622ec190818cfc9373c8cd97d9d42b396d1f7c8bdc2750ddeeb027352b6faca57f4bf8a5171f0aa3c1bc51ffb642b03d'
             'SKIP')
 
 package() {

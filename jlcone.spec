@@ -1,6 +1,6 @@
 # Repackages JLCPCB's official .deb (Electron 35 app, bundled runtime) for RHEL/Fedora.
 # sha512 from the publisher's update feed (latest-linux.yml); update.sh rewrites it
-%global deb_sha512 3b7b8ce774b8ea0b0bba6705d802171cf297a24adfa0ad6679baaa8d69e06382aea25626845e784581f7b68bac24ea3801d79a283127a064eae55bad7c31a3de
+%global deb_sha512 2e0d09899970f2f580f39bf28fc23217622ec190818cfc9373c8cd97d9d42b396d1f7c8bdc2750ddeeb027352b6faca57f4bf8a5171f0aa3c1bc51ffb642b03d
 
 # Prebuilt binaries: no debuginfo, stripping or build-id links
 %global debug_package %{nil}
@@ -11,8 +11,8 @@
 %global __requires_exclude ^(libffmpeg|libEGL|libGLESv2|libvk_swiftshader|libvulkan)\\.so.*$
 
 Name:           jlcone-bin
-Version:        1.0.72
-Release:        6%{?dist}
+Version:        1.0.73
+Release:        1%{?dist}
 Summary:        JLCONE - JLCPCB Desktop Client
 License:        Proprietary
 URL:            https://www.jlcpcb.com
